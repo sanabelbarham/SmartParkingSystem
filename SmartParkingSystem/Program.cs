@@ -1,6 +1,8 @@
 
+using BLL.Service;
 using DAL.Data;
 using DAL.Identity;
+using DAL.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -61,8 +63,9 @@ namespace SmartParkingSystem
             });
 
             // 
-          
 
+            builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
+            builder.Services.AddScoped<IParkingSpotRepository, ParkingSpotRepository>();
 
             var app = builder.Build();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);

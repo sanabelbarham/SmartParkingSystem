@@ -1,4 +1,5 @@
-﻿using DAL.Data;
+﻿using BLL.Service;
+using DAL.Data;
 using DAL.DTO.Responce;
 using DAL.Migrations;
 using Mapster;
@@ -16,18 +17,22 @@ namespace SmartParkingSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
+        private readonly IParkingSpotService _parkingSpotService;
 
-        public ParkingSpotController( ApplicationDbContext context,IStringLocalizer<SharedResources> stringLocalizer)
+        public ParkingSpotController( ApplicationDbContext context,IStringLocalizer<SharedResources> stringLocalizer,
+            IParkingSpotService parkingSpotService)
         {
             _context = context;
             _stringLocalizer = stringLocalizer;
+            _parkingSpotService = parkingSpotService;
         }
         [HttpGet("")]
         public IActionResult Index()
         {
-            var spots = _context.parkingSpots.Include(c=>c.Translations).ToList();
-            var responce = spots.Adapt<List<ParkingSpotResponce>>();
+          
+            var responce =   _parkingSpotService.GetSpotsAsync();
             return Ok(new{ message=_stringLocalizer["Success"].Value,responce});
         }
+
     }
 }
