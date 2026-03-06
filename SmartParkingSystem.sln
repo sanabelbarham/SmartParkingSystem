@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartParkingSystem", "SmartParkingSystem\SmartParkingSystem.csproj", "{A81CE06A-1D72-48BC-9823-44DF37505C38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{9DB4C87D-9BBF-4A62-81A9-B41268EBB952}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{7F3158C1-BF93-45B3-A1DA-A1FDDA63E05E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A81CE06A-1D72-48BC-9823-44DF37505C38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A81CE06A-1D72-48BC-9823-44DF37505C38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A81CE06A-1D72-48BC-9823-44DF37505C38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A81CE06A-1D72-48BC-9823-44DF37505C38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DB4C87D-9BBF-4A62-81A9-B41268EBB952}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DB4C87D-9BBF-4A62-81A9-B41268EBB952}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DB4C87D-9BBF-4A62-81A9-B41268EBB952}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DB4C87D-9BBF-4A62-81A9-B41268EBB952}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F3158C1-BF93-45B3-A1DA-A1FDDA63E05E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F3158C1-BF93-45B3-A1DA-A1FDDA63E05E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F3158C1-BF93-45B3-A1DA-A1FDDA63E05E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F3158C1-BF93-45B3-A1DA-A1FDDA63E05E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A26319E3-731A-4E0D-BE23-423899F27D61}
+	EndGlobalSection
+EndGlobal
