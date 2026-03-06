@@ -9,13 +9,14 @@ namespace DAL.Models
    public class ParkingSpot
     {
         public int ParkingSpotID { get; set; }
-        public string SpotNumber { get; set; }
-        public string ParkingFloor { get; set; }
-        public string ParkingArea { get; set; }
+
         public bool IsAvailable { get; set; }
         public bool NearExit { get; set; }
+        public DateTime CreatedAt { get; set; }
         public QR QR { get; set; } = new QR();
         public List<Reservation> reservations { get; set; } = new List<Reservation>();
+        public List<ParkingSpotTranslation> Translations { get; set; }
+    }       
+
+
     }
-    
-}

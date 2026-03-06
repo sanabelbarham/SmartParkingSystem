@@ -17,6 +17,7 @@ namespace DAL.Data
   
         public DbSet<Payment> payments { get; set; }
         public DbSet<Vehicle> vehicles { get; set; }
+        public DbSet<ParkingSpotTranslation> Translations { get; set; }
         public DbSet<ParkingSpot> parkingSpots { get; set; }
         public DbSet<Reservation> reservations { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
