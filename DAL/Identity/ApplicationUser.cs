@@ -14,8 +14,8 @@ namespace DAL.Identity
       //identity by default gives you id, email,hashpassword,phone number
         public string FullName { get; set; }
    
-        public bool BlockedStatus { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public bool? BlockedStatus { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         public List<Vehicle> vehicles { get; set; } = new List<Vehicle>();
         public List<Reservation> reservations { get; set; } = new List<Reservation>();

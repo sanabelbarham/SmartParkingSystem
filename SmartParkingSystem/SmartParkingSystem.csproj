@@ -19,4 +19,9 @@
     <ProjectReference Include="..\DAL\DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Area\Admin\" />
+    <Folder Include="Area\User\" />
+  </ItemGroup>
+
 </Project>

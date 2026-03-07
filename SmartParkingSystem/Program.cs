@@ -1,19 +1,23 @@
 
 using BLL.Service;
+using BLL.Service.Authentication;
 using DAL.Data;
 using DAL.Identity;
 using DAL.Repository;
+using DAL.Utilis;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace SmartParkingSystem
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +70,9 @@ namespace SmartParkingSystem
 
             builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
             builder.Services.AddScoped<IParkingSpotRepository, ParkingSpotRepository>();
+            builder.Services.AddScoped<ISeedData, SeedData>();
+            builder.Services.AddScoped<ISeedData, UserSeedData>();
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             var app = builder.Build();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
@@ -80,7 +87,16 @@ namespace SmartParkingSystem
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            //when the program is done delete the seed data objects created
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var seeders = services.GetServices<ISeedData>();
+                foreach (var seeder in seeders)
+                {
+                    await seeder.SeedData();   
+                }
+            }
 
             app.MapControllers();
 

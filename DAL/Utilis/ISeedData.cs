@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DAL.Utilis
 {
-    interface ISeedData
+   public interface ISeedData
     {
+        Task SeedData();
     }
 }

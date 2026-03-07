@@ -54,9 +54,9 @@ namespace DAL.Utilis
                 };
 
                 var creatUser1 = await _userManager.CreateAsync(user1, "Sanabel@123");
-                var creatUser2 = await _userManager.CreateAsync(user2, "malakoot@123");
-                var creatUser3 = await _userManager.CreateAsync(user3, "sabri@123");
-                var creatUser4 = await _userManager.CreateAsync(user4, "yaqoot@123");
+                var creatUser2 = await _userManager.CreateAsync(user2, "Malakoot@123");
+                var creatUser3 = await _userManager.CreateAsync(user3, "Sabri@123");
+                var creatUser4 = await _userManager.CreateAsync(user4, "Yaqoot@123");
 
                 await _userManager.AddToRoleAsync(user1, "SuperAdmin");
                 await _userManager.AddToRoleAsync(user2, "Admin");
