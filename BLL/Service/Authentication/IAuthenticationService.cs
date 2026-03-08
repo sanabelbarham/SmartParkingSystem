@@ -11,6 +11,7 @@ namespace BLL.Service.Authentication
   public  interface IAuthenticationService
     {
         Task<RegistorResponce> RegistorAsync(RegistorRequests request);
+        Task<LoginResponce> LoginAsync(LoginRequest request);
 
     }
 }

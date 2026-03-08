@@ -3,6 +3,7 @@ using DAL.Data;
 using DAL.DTO.Responce;
 using DAL.Migrations;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace SmartParkingSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ParkingSpotController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

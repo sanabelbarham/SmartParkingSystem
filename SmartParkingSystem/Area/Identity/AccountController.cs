@@ -20,12 +20,20 @@ namespace SmartParkingSystem.Area.Identity
             _authenticationService = authenticationService;
         }
 
-        [HttpPost("")]
+        [HttpPost("Registor")]
         public async Task<IActionResult> Registor(RegistorRequests registerRequest)
         {
             var responce = await _authenticationService.RegistorAsync(registerRequest);
             return Ok(responce);
 
         }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginRequest request)
+        {
+            var responce = await _authenticationService.LoginAsync(request);
+            return Ok(responce);
+        }
+
     }
 }

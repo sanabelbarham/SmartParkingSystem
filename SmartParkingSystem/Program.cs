@@ -5,12 +5,15 @@ using DAL.Data;
 using DAL.Identity;
 using DAL.Repository;
 using DAL.Utilis;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SmartParkingSystem
@@ -30,6 +33,7 @@ namespace SmartParkingSystem
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"
             )));
+            //Identity
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -74,6 +78,38 @@ namespace SmartParkingSystem
             builder.Services.AddScoped<ISeedData, UserSeedData>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
+
+            //JWT
+
+
+
+
+            builder.Services.AddAuthentication(opt => {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                  .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
+                    };
+                });
+
+
+    
+
+ 
+    
+            //
+
+
             var app = builder.Build();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
@@ -85,6 +121,7 @@ namespace SmartParkingSystem
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
             //when the program is done delete the seed data objects created
@@ -97,7 +134,7 @@ namespace SmartParkingSystem
                     await seeder.SeedData();   
                 }
             }
-
+          
             app.MapControllers();
 
             app.Run();
