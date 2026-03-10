@@ -12,6 +12,7 @@ namespace BLL.Service.Authentication
     {
         Task<RegistorResponce> RegistorAsync(RegistorRequests request);
         Task<LoginResponce> LoginAsync(LoginRequest request);
+        Task<bool> ConfirmEmailAsync(string token, string userId);
 
     }
 }

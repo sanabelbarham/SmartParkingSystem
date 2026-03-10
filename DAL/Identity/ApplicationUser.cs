@@ -16,6 +16,9 @@ namespace DAL.Identity
    
         public bool? BlockedStatus { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public string ?RequestPasswordReset { get; set; }
+
+        public DateTime? ResetPasswordExpiryDate { get; set; }
 
         public List<Vehicle> vehicles { get; set; } = new List<Vehicle>();
         public List<Reservation> reservations { get; set; } = new List<Reservation>();

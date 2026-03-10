@@ -77,6 +77,7 @@ namespace SmartParkingSystem
             builder.Services.AddScoped<ISeedData, SeedData>();
             builder.Services.AddScoped<ISeedData, UserSeedData>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 
             //JWT

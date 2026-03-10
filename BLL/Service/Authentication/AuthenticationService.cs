@@ -19,11 +19,16 @@ namespace BLL.Service.Authentication
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmailSender _emailSender;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AuthenticationService(UserManager<ApplicationUser> userManager,IConfiguration configuration)
+        public AuthenticationService(UserManager<ApplicationUser> userManager,IConfiguration configuration,
+            IEmailSender emailSender, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _emailSender = emailSender;
+            _signInManager = signInManager;
         }
 
         public async Task<LoginResponce> LoginAsync(LoginRequest request)
@@ -39,23 +44,59 @@ namespace BLL.Service.Authentication
                 };
 
             }
-            var passwordCheck = await _userManager.CheckPasswordAsync(user, request.Password);
-            if (!passwordCheck)
+
+
+            if(await _userManager.IsLockedOutAsync(user))
+                {
+                    return new LoginResponce
+                    {
+                        Success = false,
+                        Message = "the account is louked out "
+                    };
+                }
+
+
+
+                var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
+
+            
+            if (result.IsLockedOut)
             {
                 return new LoginResponce
                 {
-                    Message = "invalid Password",
+                    Message = "the account is locked out  dur to multipul trys",
                     Success = false
                 };
             }
 
-                return new LoginResponce
-                {
-                    Message = "Login Successfuly",
-                    Success = true,
-                    AccessToken=await GenerateAccessToken(user)
 
-                };
+            else if (result.IsNotAllowed)
+                {
+                    return new LoginResponce
+                    {
+                        Message = "plz confirm your email",
+                        Success = false
+                    };
+                }
+
+            else if(!result.Succeeded)
+                {
+
+                    return new LoginResponce
+                    {
+                        Message = "invalid passwoed plz try again",
+                        Success = false
+                    };
+                }
+
+
+                return new LoginResponce
+                    {
+                        Message = "Login Successfuly",
+                        Success = true,
+                        AccessToken = await GenerateAccessToken(user)
+
+                    };
             }
             catch(Exception e)
             {
@@ -113,7 +154,15 @@ namespace BLL.Service.Authentication
                     };
 
                 }
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                token = Uri.EscapeDataString(token);
+                var ConfirmEmail = $"https://localhost:7250/api/auth/Account/ConfirmEmail?token={token}&userId={user.Id}";
                 await _userManager.AddToRoleAsync(user, "User");
+                await _emailSender.SendEmailAsync(request.Email, "Confirm email", $"<h1>hi</h1> " +
+                 $"<a href={ConfirmEmail}></a>" +
+                    "");
+
+
                 return new RegistorResponce
                 {
                     Message = "Registor succeeded",
@@ -132,6 +181,21 @@ namespace BLL.Service.Authentication
                 };
             }
 
+        }
+
+
+        public async Task<bool>ConfirmEmailAsync(string token,string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user is null)
+            {
+                return false;
+            }
+           var result= await _userManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+              { return false; }
+            return true;
+        
         }
     }
 }

@@ -28,6 +28,16 @@ namespace SmartParkingSystem.Area.Identity
 
         }
 
+
+
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token,string userId )
+        {
+            var responce = await _authenticationService.ConfirmEmailAsync(token,userId);
+            return Ok(responce);
+
+        }
+
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {
