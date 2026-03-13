@@ -1,4 +1,6 @@
-﻿using DAL.DTO.Responce;
+﻿using DAL.DTO.Request;
+using DAL.DTO.Responce;
+using DAL.Models;
 using DAL.Repository;
 using Mapster;
 using System;
@@ -16,6 +18,14 @@ namespace BLL.Service
         public ParkingSpotService(IParkingSpotRepository parkingSpotRepository)
         {
             _parkingSpotRepository = parkingSpotRepository;
+        }
+
+        public async Task<ParkingSpotResponce> CreatParkingSpot(ParkingSpotRequest request)
+        {
+            var parkingSpot = request.Adapt<ParkingSpot>();
+           var result= await _parkingSpotRepository.CreateSpot(parkingSpot);
+            var responce = result.Adapt<ParkingSpotResponce>();
+            return responce;
         }
 
         public async Task<List<ParkingSpotResponce>> GetSpotsAsync()

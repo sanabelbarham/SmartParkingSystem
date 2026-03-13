@@ -20,10 +20,17 @@ namespace DAL.Repository
             _context = context;
         }
 
+        public async Task<ParkingSpot> CreateSpot(ParkingSpot parkingSpot)
+        {
+            _context.parkingSpots.Add(parkingSpot);
+            _context.SaveChanges();
+            return parkingSpot;
+        }
+
         public async Task<List<ParkingSpot>> PrintAsync()
         {
 
-           var spots= _context.parkingSpots.Include(c => c.Translations).ToList();
+           var spots=   _context.parkingSpots.Include(c => c.Translations).ToList();
       
             return spots;
         }

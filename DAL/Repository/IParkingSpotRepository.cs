@@ -11,5 +11,6 @@ namespace DAL.Repository
    public interface IParkingSpotRepository
     {
         Task<List<ParkingSpot>> PrintAsync();
+        Task<ParkingSpot> CreateSpot(ParkingSpot parkingSpot);
     }
 }

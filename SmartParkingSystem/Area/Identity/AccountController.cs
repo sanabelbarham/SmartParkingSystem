@@ -45,5 +45,21 @@ namespace SmartParkingSystem.Area.Identity
             return Ok(responce);
         }
 
-    }
+        [HttpPost("ResetCode")]
+        public async Task<IActionResult> ResetCode(ForgetPasswordRequest request)
+        {
+            var responce = await _authenticationService.ReqestPasswordResetAsync(request);
+            return Ok(responce);
+        }
+
+        [HttpPatch("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+            var responce = await _authenticationService.ResetPasswordAsync(request);
+            if(responce is not null)
+            return Ok(responce);
+            return BadRequest(responce);
+        }
+
 }
+    }

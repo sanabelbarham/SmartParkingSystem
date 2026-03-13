@@ -8,6 +8,11 @@ namespace DAL.DTO.Request
 {
     public class ParkingSpotRequest
     {
+    
+
+          public string SpotNumber { get; set; }//A-10
+        public string ParkingFloor { get; set; }
+        public string ParkingArea { get; set; }
         public List<ParkingSpotTranslationRequest> Translations { get; set; }
 
     }

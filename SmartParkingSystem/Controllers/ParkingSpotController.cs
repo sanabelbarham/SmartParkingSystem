@@ -1,5 +1,6 @@
 ﻿using BLL.Service;
 using DAL.Data;
+using DAL.DTO.Request;
 using DAL.DTO.Responce;
 using DAL.Migrations;
 using Mapster;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using SmartParkingSystem.Resources;
+using System.Threading.Tasks;
 
 namespace SmartParkingSystem.Controllers
 {
@@ -34,6 +36,14 @@ namespace SmartParkingSystem.Controllers
           
             var responce =   _parkingSpotService.GetSpotsAsync();
             return Ok(new{ message=_stringLocalizer["Success"].Value,responce});
+        }
+
+        [HttpPost("createParking")]
+        public async Task<IActionResult> CreateParking(ParkingSpotRequest request)
+        {
+
+            var responce = await _parkingSpotService.CreatParkingSpot(request);
+            return Ok(new { message = _stringLocalizer["Success"].Value, responce });
         }
 
     }

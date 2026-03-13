@@ -1,4 +1,6 @@
-﻿using DAL.DTO.Request.Registor;
+﻿using DAL.DTO.Request;
+using DAL.DTO.Request.Registor;
+using DAL.DTO.Responce;
 using DAL.DTO.Responce.Registor;
 using System;
 using System.Collections.Generic;
@@ -12,7 +14,11 @@ namespace BLL.Service.Authentication
     {
         Task<RegistorResponce> RegistorAsync(RegistorRequests request);
         Task<LoginResponce> LoginAsync(LoginRequest request);
+    
+        
         Task<bool> ConfirmEmailAsync(string token, string userId);
+        Task<ForgetPasswordResponce> ReqestPasswordResetAsync(ForgetPasswordRequest request);
+        Task<ResetPasswordResponce> ResetPasswordAsync(ResetPasswordRequest request);
 
     }
 }

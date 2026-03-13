@@ -1,4 +1,6 @@
-﻿using DAL.DTO.Request.Registor;
+﻿using DAL.DTO.Request;
+using DAL.DTO.Request.Registor;
+using DAL.DTO.Responce;
 using DAL.DTO.Responce.Registor;
 using DAL.Identity;
 using Mapster;
@@ -112,12 +114,12 @@ namespace BLL.Service.Authentication
         private async Task< string> GenerateAccessToken(ApplicationUser user)
         {
             //claim== payload== the body of the token ==> what you want to put inisde it
-            var userClaim = new List<Claim>() {
-            new Claim("id",user.Id),
-            new Claim("name",user.UserName),
-            new Claim("email",user.Email)
-            };
-
+            var userClaim = new List<Claim>()
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Email, user.Email)
+        };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -197,5 +199,81 @@ namespace BLL.Service.Authentication
             return true;
         
         }
+
+        public async Task<ForgetPasswordResponce> ReqestPasswordResetAsync(ForgetPasswordRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user is null)
+            {
+                return new ForgetPasswordResponce
+                {
+                    Success = false,
+                    Message = "no user with this email "
+                };
+            }
+            var random = new Random();
+            var code = random.Next(200, 10000).ToString();
+            user.PaswordResetCode = code;
+            user.PaswordResetCodeExpiary = DateTime.UtcNow.AddMinutes(15);
+            await _userManager.UpdateAsync(user);
+            await _emailSender.SendEmailAsync(user.Email, "reset password", $"<h1> the code is {code}</h1>");
+            return new ForgetPasswordResponce
+            {
+                Message = "code sent succefully",
+                Success = true
+            };
+
+
+        }
+
+        public async Task<ResetPasswordResponce> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user is null)
+            {
+                return new ResetPasswordResponce
+                {
+                    Success = false,
+                    Message = "no user with this email "
+                };
+            }
+
+            if (user.PaswordResetCode != request.Code)
+            {
+                return new ResetPasswordResponce
+                {
+                    Success = false,
+                    Message = "the code is not the same"
+                };
+            }
+            if (user.PaswordResetCodeExpiary < DateTime.UtcNow)
+            {
+                return new ResetPasswordResponce
+                {
+                    Success = false,
+                    Message = "the code is expired"
+                };
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, request.Password);
+            if (!result.Succeeded)
+            {
+                return new ResetPasswordResponce
+                {
+                    Success = false,
+                    Message = "reset password proccess failed "
+                };
+            }
+            await _emailSender.SendEmailAsync(request.Email, "<h1>reset password</h1>", "<p> reset password is done</p>");
+
+            return new ResetPasswordResponce
+            {
+                Success = true,
+                Message = "reset password proccess is done "
+            };
+
+        }
+
+     
     }
 }
