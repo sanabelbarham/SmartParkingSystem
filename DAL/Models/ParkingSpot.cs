@@ -10,7 +10,7 @@ namespace DAL.Models
     {
         public int ParkingSpotID { get; set; }
 
-        public bool IsAvailable { get; set; }
+        public bool IsAvailable { get; set; } = true;
         public bool NearExit { get; set; }
       
         public QR QR { get; set; } = new QR();

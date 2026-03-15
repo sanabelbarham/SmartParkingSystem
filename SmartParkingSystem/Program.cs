@@ -72,12 +72,6 @@ namespace SmartParkingSystem
 
             // 
 
-            builder.Services.AddScoped<IParkingSpotService, ParkingSpotService>();
-            builder.Services.AddScoped<IParkingSpotRepository, ParkingSpotRepository>();
-            builder.Services.AddScoped<ISeedData, SeedData>();
-            builder.Services.AddScoped<ISeedData, UserSeedData>();
-            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-            builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 
             //JWT
@@ -104,12 +98,13 @@ namespace SmartParkingSystem
                 });
 
 
-    
 
- 
-    
+
+
+
             //
 
+            AppConfigurations.Config(builder.Services);
 
             var app = builder.Build();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);

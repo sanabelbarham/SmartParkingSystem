@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL.DTO.Responce.Registor
+namespace DAL.DTO.Responce
 {
-  public  class RegistorResponce
+   public  class BaseResponce
     {
         public string Message { get; set; }
+
+        public bool Success { get; set; }
         public List<string>? Errors { get; set; }
-     
     }
 }

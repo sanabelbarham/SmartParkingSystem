@@ -11,6 +11,8 @@ namespace DAL.DTO.Responce
     {
         public int ParkingSpotID { get; set; }
 
+        public bool IsAvailable { get; set; } = true;
+
         public List<ParkingSpotTranslationResponce> Translations { get; set; }
     }
 }

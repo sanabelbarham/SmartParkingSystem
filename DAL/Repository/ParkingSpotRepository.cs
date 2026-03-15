@@ -27,12 +27,34 @@ namespace DAL.Repository
             return parkingSpot;
         }
 
+        public async Task DeleteSpotAsync(ParkingSpot spot)
+        {
+          _context.parkingSpots.Remove(spot);
+            _context.SaveChanges();
+
+
+
+        }
+
+        public async Task<ParkingSpot> FindById(int id)
+        {
+          return await _context.parkingSpots.Include(c=>c.Translations).FirstOrDefaultAsync(c=>c.ParkingSpotID==id);
+
+
+        }
+
         public async Task<List<ParkingSpot>> PrintAsync()
         {
 
            var spots=   _context.parkingSpots.Include(c => c.Translations).ToList();
       
             return spots;
+        }
+
+        public async Task UpdateSpotAsync(ParkingSpot spot)
+        {
+            _context.parkingSpots.Update(spot);
+            _context.SaveChanges();
         }
     }
 }

@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace DAL.DTO.Responce.Registor
 {
-  public  class ResetPasswordResponce
+  public  class ResetPasswordResponce:BaseResponce
     {
-        public string Message { get; set; }
-        public bool Success { get; set; }
-        public List<string>? Errors { get; set; }
+       
     }
 }

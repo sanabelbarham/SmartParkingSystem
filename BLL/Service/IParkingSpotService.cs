@@ -13,5 +13,8 @@ namespace BLL.Service
     {
         Task <List<ParkingSpotResponce>>GetSpotsAsync();
         Task<ParkingSpotResponce> CreatParkingSpot(ParkingSpotRequest request);
+        Task<BaseResponce> UpdateSpotAsync(int id,ParkingSpotRequest request);
+        Task<BaseResponce> DeleteSpotAsync(int id);
+
     }
 }

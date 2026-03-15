@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace DAL.DTO.Responce.Registor
 {
-    public class LoginResponce
+    public class LoginResponce:BaseResponce
     {
-        public string Message { get; set; }
-        public string ? AccessToken { get; set; }
-        public bool Success { get; set; }
-        public List<string>? Errors { get; set; }
+       
+
+        public string? AccessToken { get; set; }
 
     }
 }

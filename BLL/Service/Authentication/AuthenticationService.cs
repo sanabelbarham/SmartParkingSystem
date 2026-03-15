@@ -114,11 +114,13 @@ namespace BLL.Service.Authentication
         private async Task< string> GenerateAccessToken(ApplicationUser user)
         {
             //claim== payload== the body of the token ==> what you want to put inisde it
+            var roles = await _userManager.GetRolesAsync(user);
             var userClaim = new List<Claim>()
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, string.Join(',',roles))
         };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -274,6 +276,5 @@ namespace BLL.Service.Authentication
 
         }
 
-     
     }
 }
