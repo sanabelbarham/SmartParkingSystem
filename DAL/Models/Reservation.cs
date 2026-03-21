@@ -10,8 +10,11 @@ namespace DAL.Models
 
     public enum ReservationStatusEnum
     {
-        Reserved=1,
-        UnReserved=2
+        Pending = 1,
+        Reserved = 2,
+        Expired = 3,
+        Cancelled = 4,
+        Completed = 5
     }
 
 
@@ -22,11 +25,12 @@ namespace DAL.Models
         //public int UserID { get; set; }
         //public int SpotID { get; set; }
         public DateTime EntryTime { get; set; }
-        public DateTime ExitTime { get; set; }
+        public DateTime? ExitTime { get; set; }
         public DateTime ExpiryTime { get; set; }
-        public ReservationStatusEnum Status { get; set; }
-        public string Reservation_QR { get; set; }
+        public ReservationStatusEnum? Status { get; set; }
+  
         public DateTime CreatedAt { get; set; }
+        public string ?Reservation_QR { get; set; }
         //****************************************
 
         //1 to many
@@ -41,7 +45,7 @@ namespace DAL.Models
         public ParkingSpot ParkingSpot { get; set; }
 
         // 1 to 1
-        public Payment Payment { get; set; }
+        public Payment? Payment { get; set; }
         
 
     }

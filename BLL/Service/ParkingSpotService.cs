@@ -38,6 +38,18 @@ namespace BLL.Service
         }
 
 
+
+
+        public async Task<List<ParkingSpotResponce>> GetAvaliableSpotsAsync()
+        {
+            var spots = await _parkingSpotRepository.GetAvailableSpotsAsync();
+            var responce = spots.Adapt<List<ParkingSpotResponce>>();
+
+
+            return responce;
+        }
+
+
         public async Task<BaseResponce> DeleteSpotAsync(int id)
         {
             try

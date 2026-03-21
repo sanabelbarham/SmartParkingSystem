@@ -28,6 +28,7 @@ namespace DAL.Utilis
                     UserName = "sanabel",
                     FullName = "sanabel barham",
                     Email = "sanabelbarham123@gmail.com",
+                    
                     EmailConfirmed = true
 
                 };

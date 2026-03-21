@@ -51,6 +51,16 @@ namespace DAL.Repository
             return spots;
         }
 
+
+
+        public async Task<List<ParkingSpot>> GetAvailableSpotsAsync()
+        {
+
+            var spots = _context.parkingSpots.Include(c => c.Translations).Where(c=>c.IsAvailable==true).ToList();
+
+            return spots;
+        }
+
         public async Task UpdateSpotAsync(ParkingSpot spot)
         {
             _context.parkingSpots.Update(spot);

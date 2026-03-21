@@ -65,6 +65,14 @@ namespace SmartParkingSystem.Area.Admin
             return Ok(new { message = _stringLocalizer["Success"].Value, responce });
         }
 
+        [HttpGet("GetAvailableSpots")]
+        public IActionResult GetSpots()
+        {
+
+            var responce = _parkingSpotService.GetAvaliableSpotsAsync();
+            return Ok(new { message = _stringLocalizer["Success"].Value, responce });
+        }
+
 
     }
 

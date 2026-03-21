@@ -15,5 +15,6 @@ namespace DAL.Repository
         Task DeleteSpotAsync(ParkingSpot spot);
         Task UpdateSpotAsync(ParkingSpot spot);
         Task<ParkingSpot> FindById(int id);
+        Task<List<ParkingSpot>> GetAvailableSpotsAsync();
     }
 }

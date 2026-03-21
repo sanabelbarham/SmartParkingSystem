@@ -1,6 +1,7 @@
 ﻿using BLL.Service;
 using DAL.Data;
 using DAL.DTO.Request;
+using DAL.DTO.Request.Vehicle;
 using DAL.DTO.Responce;
 using DAL.Migrations;
 using Mapster;
@@ -37,6 +38,16 @@ namespace SmartParkingSystem.Area.User
             var responce = _parkingSpotService.GetSpotsAsync();
             return Ok(new { message = _stringLocalizer["Success"].Value, responce });
         }
+
+
+        [HttpGet("GetAvailableSpots")]
+        public IActionResult GetSpots()
+        {
+
+            var responce = _parkingSpotService.GetAvaliableSpotsAsync();
+            return Ok(new { message = _stringLocalizer["Success"].Value, responce });
+        }
+
 
 
 
