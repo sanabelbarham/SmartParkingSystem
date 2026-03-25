@@ -5,6 +5,7 @@ using DAL.Utilis;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BLL.Service.Vehicle;
 using BLL.Service.Reservations;
+using BLL.Service.QR;
 
 
 namespace SmartParkingSystem
@@ -26,7 +27,7 @@ namespace SmartParkingSystem
             Services.AddScoped<IReservationService, ReservationService>();
             Services.AddScoped<IReservationRepository, ReservationRepository>();
             Services.AddTransient<BLL.Service.Authentication.IEmailSender, EmailSender>();
-
+            Services.AddScoped<QRCode>();
         }
         }
 }

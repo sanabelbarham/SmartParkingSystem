@@ -23,8 +23,9 @@ namespace SmartParkingSystem.Area.User
         {
             var responce = await _reservationService.CreateReservationAsync(reservationRequest);
             return  Ok(new { responce });
-
+             
         }
+
 
         [HttpGet("get")]
         public async Task<IActionResult>  GetReservation( )
@@ -35,10 +36,10 @@ namespace SmartParkingSystem.Area.User
 
         }
 
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteReservation(ReservationRequest reservationRequest)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReservation( [FromRoute]int  id)
         {
-            var responce = await _reservationService.DeleteReservationAsync(reservationRequest);
+            var responce = await _reservationService.DeleteReservationAsync(id);
             return Ok(new { responce });
 
         }

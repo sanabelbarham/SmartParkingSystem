@@ -27,6 +27,10 @@ namespace DAL.Repository
 
 
         }
+        public async Task<Reservation> FindById(int id)
+        {
+            return await _context.reservations.FirstOrDefaultAsync(c => c.ReservationID == id);
+        }
 
         public async Task DeleteReservationAsync(Reservation reservationRequest)
         {
@@ -40,6 +44,50 @@ namespace DAL.Repository
                 Include(c=>c.User).Include(c=>c.ParkingSpot).ToList();
                return result;
 
+        }
+
+        public async Task<bool> FindReservation(Reservation reservationRequest)
+        {
+            var result = await _context.reservations.
+                
+                FirstOrDefaultAsync
+                (c => c.UserID == reservationRequest.UserID &&
+                c.VehicleID==reservationRequest.VehicleID
+                &&c.ParkingSpotID==reservationRequest.ParkingSpotID
+            );
+            if (result is not null)
+                return true;
+
+
+            return false;
+        }
+
+        public async Task<bool> FindIfUserexis(string id)
+        {
+            var result = await _context.Users.FirstOrDefaultAsync(c => c.Id == id);
+            if (result is null)
+                return false;
+            return true;
+        }
+
+        public async Task<bool> FindIfVichleexis(int id)
+        {
+      
+
+
+            var result = await _context.vehicles.FirstOrDefaultAsync(c => c.VehicleID == id);
+            if (result is null)
+                return false;
+            return true;
+        }
+
+        public  async Task<bool> FindIfParkingSpotexis(int id)
+        {
+
+            var result = await _context.parkingSpots.FirstOrDefaultAsync(c => c.ParkingSpotID == id);
+            if (result is null)
+                return false;
+            return true;
         }
     }
 }

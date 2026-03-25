@@ -12,7 +12,7 @@ namespace BLL.Service.Reservations
  public   interface IReservationService
     {
         Task<BaseResponce> CreateReservationAsync(ReservationRequest reservationRequest);
-        Task<BaseResponce> DeleteReservationAsync(ReservationRequest reservationRequest);
+        Task<BaseResponce> DeleteReservationAsync(int id);
         Task<List<ReservationResponce>> GetReservationAsync( );
     }
 }
