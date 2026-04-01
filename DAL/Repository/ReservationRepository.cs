@@ -46,20 +46,15 @@ namespace DAL.Repository
 
         }
 
-        public async Task<bool> FindReservation(Reservation reservationRequest)
+        public async Task<bool> IsParkingSpotReserved(int  ParkingId)
         {
             var result = await _context.reservations.
-                
-                FirstOrDefaultAsync
-                (c => c.UserID == reservationRequest.UserID &&
-                c.VehicleID==reservationRequest.VehicleID
-                &&c.ParkingSpotID==reservationRequest.ParkingSpotID
+
+                AnyAsync
+                (c=>c.ParkingSpotID== ParkingId
+                &&( c.Status ==ReservationStatusEnum.Pending || c.Status==ReservationStatusEnum.Reserved)
             );
-            if (result is not null)
-                return true;
-
-
-            return false;
+            return result;
         }
 
         public async Task<bool> FindIfUserexis(string id)

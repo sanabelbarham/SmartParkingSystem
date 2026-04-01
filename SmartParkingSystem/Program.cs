@@ -2,6 +2,7 @@ using BLL.Service;
 using BLL.Service.Authentication;
 using DAL.Data;
 using DAL.Identity;
+using DAL.Models;
 using DAL.Repository;
 using DAL.Utilis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Globalization;
 using System.Text;
+using Stripe;
+
 
 namespace SmartParkingSystem
 {
@@ -128,6 +131,12 @@ namespace SmartParkingSystem
 
             // Register Services
             AppConfigurations.Config(builder.Services);
+
+
+            //Stripe
+
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 

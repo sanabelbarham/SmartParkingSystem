@@ -26,7 +26,7 @@ namespace SmartParkingSystem
             Services.AddScoped<IVehicleRepository, VehicleRepository>();
             Services.AddScoped<IReservationService, ReservationService>();
             Services.AddScoped<IReservationRepository, ReservationRepository>();
-            Services.AddTransient<BLL.Service.Authentication.IEmailSender, EmailSender>();
+            Services.AddTransient<BLL.Service.Authentication.IEmailSender, BLL.Service.Authentication.EmailSender>();
             Services.AddScoped<QRCode>();
         }
         }

@@ -1,5 +1,6 @@
 ﻿using DAL.DTO.Request.Reservations;
 using DAL.DTO.Responce;
+using DAL.DTO.Responce.Registor;
 using DAL.DTO.Responce.Reservation;
 using DAL.Models;
 using DAL.Repository;
@@ -23,85 +24,148 @@ namespace BLL.Service.Reservations
 
         public async Task<BaseResponce> CreateReservationAsync(ReservationRequest reservationRequest)
         {
-
-            
-
-            var request = reservationRequest.Adapt<Reservation>();
-            
-            request.EntryTime = DateTime.UtcNow;
-            request.ExpiryTime = DateTime.UtcNow.AddMinutes(15);
-            request.Status = ReservationStatusEnum.Pending;
-
-             var result =await _reservationRepository.FindReservation(request);
-            //if there is reservation dont do any thing
-            if(result ==true)
+            try
             {
+
+
+                // await _reservationRepository.CreateReservationAsync(request);
+
+                var request = reservationRequest.Adapt<Reservation>();
+
+                request.EntryTime = DateTime.UtcNow;
+         
+                request.ExpiryTime = DateTime.UtcNow.AddMinutes(15);
+                request.Status = ReservationStatusEnum.Pending;
+          
+                if (request.ExitTime <= request.EntryTime)
+                {
+                    return new BaseResponce
+                    {
+                        Success = false,
+                        Message = "Exit time must be greater than entry time"
+                    };
+                }
+                request.CreatedAt = DateTime.UtcNow;
+                TimeSpan Duration = request.ExitTime - request.EntryTime;
+                request.TotalPrice = Duration.TotalHours * 1.0;//i doller per houre 
+
+                var result = await _reservationRepository.IsParkingSpotReserved(request.ParkingSpotID);
+                //if there is reservation dont do any thing
+                if (result == true)
+                {
+                    return new BaseResponce
+                    {
+                        Message = " parking spot id  is reserved or pending",
+                        Success = false,
+
+                    };
+
+                }
+
+                var userExists = await _reservationRepository.FindIfUserexis(request.UserID);
+                var vichleExists = await _reservationRepository.FindIfVichleexis(request.VehicleID);
+                var ParkingSpotExists = await _reservationRepository.FindIfParkingSpotexis(request.ParkingSpotID);
+                if (userExists && vichleExists && ParkingSpotExists)
+                {
+
+                    if (request.PaymentMethod == PaymentMethodEnum.Cash)
+                    {
+
+                        await _reservationRepository.CreateReservationAsync(request);
+                        return new BaseResponce
+                        {
+                            Message = $"Reserved completeed plz pay cash, your total price is {  request.TotalPrice}  doller ",
+                            Success = true,
+
+                        };
+
+                    }
+                    else if (request.PaymentMethod == PaymentMethodEnum.Visa)
+                    {
+
+                        //I will do somth this is not done yet
+                        return new BaseResponce
+                        {
+                            Message = "Reserved completeed, visa is accepted ",
+                            Success = true,
+
+                        };
+                    }
+                    else
+                        return new BaseResponce
+                        {
+                            Message = "plz choose a correct payment method ",
+                            Success = false,
+
+                        };
+
+                }
+
+
                 return new BaseResponce
                 {
-                    Message = "there is a reservation  with these info",
+                    Message = "The user id or vichle id or parking spot id is not found",
                     Success = false,
 
+
                 };
-
-            }
-
-            var userExists = await _reservationRepository.FindIfUserexis(request.UserID);
-            var vichleExists = await _reservationRepository.FindIfVichleexis(request.VehicleID);
-            var ParkingSpotExists = await _reservationRepository.FindIfParkingSpotexis(request.ParkingSpotID);
-            if(userExists && vichleExists && ParkingSpotExists)
+            }catch(Exception e)
             {
-
-                await _reservationRepository.CreateReservationAsync(request);
-
                 return new BaseResponce
                 {
-                    Message = "Reserved completeed",
-                    Success = true,
-
+                    Message = "An UnExpected error",
+                    Success = false,
+                    Errors = new List<string> { e.Message }
                 };
-
             }
-
-
-            return new BaseResponce
-            {
-                Message = "The user id or vichle id or parking spot id is not found",
-                Success = false,
-
-            };
 
         }
 
         public async Task<BaseResponce> DeleteReservationAsync( int id)
         {
 
-
-         //   var request = reservationRequest.Adapt<Reservation>();
-           
-           var result= await _reservationRepository.FindById(id);
-            if(result == null)
+            try
             {
+                //   var request = reservationRequest.Adapt<Reservation>();
+
+                var result = await _reservationRepository.FindById(id);
+                if (result == null)
+                {
+                    return new BaseResponce
+                    {
+                        Message = " no reservation with this id",
+                        Success = false,
+
+                    };
+                }
+                await _reservationRepository.DeleteReservationAsync(result);
                 return new BaseResponce
                 {
-                    Message = " no reservation with this id",
+                    Message = "Reserved deleted",
                     Success = true,
 
                 };
             }
-            await _reservationRepository.DeleteReservationAsync(result);
-            return new BaseResponce
+            catch(Exception e)
             {
-                Message = "Reserved deleted",
-                Success = true,
+                return new BaseResponce
+                {
+                    Message = "An UnExpected error",
+                    Success = false,
+                    Errors = new List<string> { e.Message }
 
-            };
+                };
+            }
         }
 
         public  async Task<List<ReservationResponce>> GetReservationAsync()
         {
-            var responce = await _reservationRepository.GetReservationAsync();
-            var result = responce.Adapt<List<ReservationResponce>>();
-            return result;
+            
+                var responce = await _reservationRepository.GetReservationAsync();
+                var result = responce.Adapt<List<ReservationResponce>>();
+                return result;
+        
+         
         }
     }
 }

@@ -12,7 +12,7 @@ namespace DAL.Repository
     {
         Task CreateReservationAsync(Reservation reservationRequest);
         Task DeleteReservationAsync(Reservation reservationRequest);
-        Task <bool> FindReservation(Reservation reservationRequest);
+        Task <bool> IsParkingSpotReserved(int  ParkingId);
         Task <bool> FindIfUserexis(string id );
         Task <bool> FindIfVichleexis(int id );
         Task <bool> FindIfParkingSpotexis(int id );

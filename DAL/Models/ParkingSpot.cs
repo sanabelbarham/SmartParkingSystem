@@ -13,7 +13,7 @@ namespace DAL.Models
         public bool IsAvailable { get; set; } = true;
         public bool NearExit { get; set; }
       
-        public QR QR { get; set; } = new QR();
+
         public List<Reservation> reservations { get; set; } = new List<Reservation>();
         public List<ParkingSpotTranslation> Translations { get; set; }
     }       

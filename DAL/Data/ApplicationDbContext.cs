@@ -17,7 +17,7 @@ namespace DAL.Data
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DbSet<Payment> payments { get; set; }
+     
         public DbSet<Vehicle> vehicles { get; set; }
         public DbSet<ParkingSpotTranslation> Translations { get; set; }
         public DbSet<ParkingSpot> parkingSpots { get; set; }
@@ -60,15 +60,8 @@ namespace DAL.Data
               .OnDelete(DeleteBehavior.NoAction);
 
 
-            builder.Entity<ParkingSpot>().HasOne(p => p.QR)
-         .WithOne(r => r.ParkingSpot)
-         .HasForeignKey<QR>(r => r.ParkingSpotID)
-              .OnDelete(DeleteBehavior.NoAction);
+ 
 
-            builder.Entity<Reservation>().HasOne(p => p.Payment)
-        .WithOne(r => r.Reservation)
-        .HasForeignKey<Payment>(r => r.ReservationID)
-             .OnDelete(DeleteBehavior.NoAction);
 
 
 

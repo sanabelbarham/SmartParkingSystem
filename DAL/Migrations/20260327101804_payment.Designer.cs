@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260327101804_payment")]
+    partial class payment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,6 +172,37 @@ namespace DAL.Migrations
                     b.ToTable("Translations");
                 });
 
+            modelBuilder.Entity("DAL.Models.Payment", b =>
+                {
+                    b.Property<int>("PaymentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentID"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReservationID")
+                        .HasColumnType("int");
+
+                    b.HasKey("PaymentID");
+
+                    b.HasIndex("ReservationID")
+                        .IsUnique();
+
+                    b.ToTable("payments");
+                });
+
             modelBuilder.Entity("DAL.Models.Reservation", b =>
                 {
                     b.Property<int>("ReservationID")
@@ -179,6 +213,9 @@ namespace DAL.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("EntryTime")
                         .HasColumnType("datetime2");
@@ -192,20 +229,11 @@ namespace DAL.Migrations
                     b.Property<int>("ParkingSpotID")
                         .HasColumnType("int");
 
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
-
                     b.Property<string>("Reservation_QR")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
-
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
 
                     b.Property<string>("UserID")
                         .IsRequired()
@@ -400,6 +428,17 @@ namespace DAL.Migrations
                     b.Navigation("ParkingSpot");
                 });
 
+            modelBuilder.Entity("DAL.Models.Payment", b =>
+                {
+                    b.HasOne("DAL.Models.Reservation", "Reservation")
+                        .WithOne("Payment")
+                        .HasForeignKey("DAL.Models.Payment", "ReservationID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+                });
+
             modelBuilder.Entity("DAL.Models.Reservation", b =>
                 {
                     b.HasOne("DAL.Models.ParkingSpot", "ParkingSpot")
@@ -501,6 +540,11 @@ namespace DAL.Migrations
                     b.Navigation("Translations");
 
                     b.Navigation("reservations");
+                });
+
+            modelBuilder.Entity("DAL.Models.Reservation", b =>
+                {
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("DAL.Models.Vehicle", b =>

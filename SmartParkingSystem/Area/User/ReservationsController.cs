@@ -22,8 +22,8 @@ namespace SmartParkingSystem.Area.User
         public async Task<IActionResult>CreateReservation(ReservationRequest reservationRequest)
         {
             var responce = await _reservationService.CreateReservationAsync(reservationRequest);
-            return  Ok(new { responce });
-             
+            return StatusCode(500, responce);
+
         }
 
 

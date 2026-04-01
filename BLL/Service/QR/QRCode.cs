@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace BLL.Service.QR
 {
-   public class QRCode
+    public class QRCode
     {
         public byte[] GenerateQR(string url)
         {
-            QRCodeGenerator generator = new QRCodeGenerator();
-            QRCodeData data = generator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+            using QRCodeGenerator generator = new QRCodeGenerator();
+            using QRCodeData data = generator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
 
             PngByteQRCode qrCode = new PngByteQRCode(data);
 
