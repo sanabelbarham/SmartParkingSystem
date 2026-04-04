@@ -1,4 +1,5 @@
-﻿using DAL.DTO.Request.Reservations;
+﻿using Azure.Core;
+using DAL.DTO.Request.Reservations;
 using DAL.Models;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,6 @@ namespace DAL.Repository
         Task <bool> FindIfParkingSpotexis(int id );
         Task <List<Reservation>> GetReservationAsync();
         Task<Reservation> FindById(int id);
+        Task<ParkingSpot> GetParkingSpotById(int parkingSpotID);
     }
 }

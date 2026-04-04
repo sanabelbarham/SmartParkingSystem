@@ -28,6 +28,11 @@ namespace SmartParkingSystem
             Services.AddScoped<IReservationRepository, ReservationRepository>();
             Services.AddTransient<BLL.Service.Authentication.IEmailSender, BLL.Service.Authentication.EmailSender>();
             Services.AddScoped<QRCode>();
+            Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
         }
         }
 }

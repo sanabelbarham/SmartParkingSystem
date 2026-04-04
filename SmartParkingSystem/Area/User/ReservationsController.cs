@@ -19,13 +19,19 @@ namespace SmartParkingSystem.Area.User
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult>CreateReservation(ReservationRequest reservationRequest)
+        public async Task<IActionResult>CreateReservation([FromBody]ReservationRequest reservationRequest)
         {
             var responce = await _reservationService.CreateReservationAsync(reservationRequest);
-            return StatusCode(500, responce);
+            return Ok(new { responce });
 
         }
+        [HttpGet("success")]
+        [AllowAnonymous]
 
+        public async Task<IActionResult> Success([FromQuery] string session_id)
+        {
+            return Ok("test");
+        }
 
         [HttpGet("get")]
         public async Task<IActionResult>  GetReservation( )

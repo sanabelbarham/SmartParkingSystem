@@ -151,6 +151,7 @@ namespace SmartParkingSystem
                 app.UseSwaggerUI();
             }
 
+
             // Global Exception Handler
             app.UseExceptionHandler(errorApp =>
             {

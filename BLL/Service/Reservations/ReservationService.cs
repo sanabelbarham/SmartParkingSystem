@@ -1,10 +1,12 @@
 ﻿using DAL.DTO.Request.Reservations;
 using DAL.DTO.Responce;
+using DAL.DTO.Responce.Checkout;
 using DAL.DTO.Responce.Registor;
 using DAL.DTO.Responce.Reservation;
 using DAL.Models;
 using DAL.Repository;
 using Mapster;
+using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +24,7 @@ namespace BLL.Service.Reservations
             _reservationRepository = ReservationRepository;
         }
 
-        public async Task<BaseResponce> CreateReservationAsync(ReservationRequest reservationRequest)
+        public async Task<CheckoutResponce> CreateReservationAsync(ReservationRequest reservationRequest)
         {
             try
             {
@@ -39,7 +41,7 @@ namespace BLL.Service.Reservations
           
                 if (request.ExitTime <= request.EntryTime)
                 {
-                    return new BaseResponce
+                    return new CheckoutResponce
                     {
                         Success = false,
                         Message = "Exit time must be greater than entry time"
@@ -53,7 +55,7 @@ namespace BLL.Service.Reservations
                 //if there is reservation dont do any thing
                 if (result == true)
                 {
-                    return new BaseResponce
+                    return new CheckoutResponce
                     {
                         Message = " parking spot id  is reserved or pending",
                         Success = false,
@@ -72,7 +74,7 @@ namespace BLL.Service.Reservations
                     {
 
                         await _reservationRepository.CreateReservationAsync(request);
-                        return new BaseResponce
+                        return new CheckoutResponce
                         {
                             Message = $"Reserved completeed plz pay cash, your total price is {  request.TotalPrice}  doller ",
                             Success = true,
@@ -80,19 +82,56 @@ namespace BLL.Service.Reservations
                         };
 
                     }
+
                     else if (request.PaymentMethod == PaymentMethodEnum.Visa)
                     {
 
-                        //I will do somth this is not done yet
-                        return new BaseResponce
+                        var spot = await _reservationRepository.GetParkingSpotById(request.ParkingSpotID);
+                        
+
+                        var options = new SessionCreateOptions
+                        {
+                            PaymentMethodTypes = new List<string> { "card" },
+                            LineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "USD",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = "Parking spot",
+                         
+                        },
+                        UnitAmount = (long)request.TotalPrice*100,
+                    },
+                    Quantity = 1,
+                },
+            },
+                            Mode = "payment",
+                            SuccessUrl = $"https://localhost:7250/api/reservations/success?session_id={{CHECKOUT_SESSION_ID}}",
+                            CancelUrl = $"https://localhost:7250/api/reservations/cancle",
+                            Metadata=new Dictionary<string, string>
+                            {
+                                {"UserId",request.UserID}
+                            }
+                        };
+                        var service = new SessionService();
+                        var session = service.Create(options);
+            
+
+
+                        return new CheckoutResponce
                         {
                             Message = "Reserved completeed, visa is accepted ",
                             Success = true,
+                            Url=session.Url
 
                         };
                     }
                     else
-                        return new BaseResponce
+                        return new CheckoutResponce
                         {
                             Message = "plz choose a correct payment method ",
                             Success = false,
@@ -102,7 +141,7 @@ namespace BLL.Service.Reservations
                 }
 
 
-                return new BaseResponce
+                return new CheckoutResponce
                 {
                     Message = "The user id or vichle id or parking spot id is not found",
                     Success = false,
@@ -111,7 +150,7 @@ namespace BLL.Service.Reservations
                 };
             }catch(Exception e)
             {
-                return new BaseResponce
+                return new CheckoutResponce
                 {
                     Message = "An UnExpected error",
                     Success = false,

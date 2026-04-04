@@ -84,5 +84,11 @@ namespace DAL.Repository
                 return false;
             return true;
         }
+
+        public async Task<ParkingSpot> GetParkingSpotById(int parkingSpotID)
+        {
+            return await _context.parkingSpots.Include(c => c.Translations).
+                FirstOrDefaultAsync(c => c.ParkingSpotID == parkingSpotID);
+        }
     }
 }

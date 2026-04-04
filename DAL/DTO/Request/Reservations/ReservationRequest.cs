@@ -11,13 +11,13 @@ namespace DAL.DTO.Request.Reservations
   public  class ReservationRequest
     {
 
-       [JsonConverter(typeof(JsonStringEnumConverter))]
+   
         public string UserID { get; set; }
         public int VehicleID { get; set; }
         public int ParkingSpotID { get; set; }
 
         public DateTime ExitTime { get; set; }
-
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public PaymentMethodEnum PaymentMethod { get; set; }
 
 
