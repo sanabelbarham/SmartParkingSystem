@@ -90,5 +90,25 @@ namespace DAL.Repository
             return await _context.parkingSpots.Include(c => c.Translations).
                 FirstOrDefaultAsync(c => c.ParkingSpotID == parkingSpotID);
         }
+
+
+
+        public async Task<Reservation?> GetBySessionIdAsync(string sessionId)
+        {
+            return await _context.reservations
+                .FirstOrDefaultAsync(r => r.SessionId == sessionId);
+        }
+        public async Task UpdateReservationAsync(Reservation reservation)
+        {
+            _context.reservations.Update(reservation);
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task UpdateParkingSpotAsync(ParkingSpot spot)
+        {
+            _context.parkingSpots.Update(spot);
+            await _context.SaveChangesAsync();
+        }
     }
 }

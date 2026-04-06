@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DAL.DTO.Responce.Reservation
 {
-    public class ReservationResponce
+    public class ReservationResponce:BaseResponce
     {
 
         public int ReservationID { get; set; }

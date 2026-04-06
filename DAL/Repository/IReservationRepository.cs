@@ -20,5 +20,11 @@ namespace DAL.Repository
         Task <List<Reservation>> GetReservationAsync();
         Task<Reservation> FindById(int id);
         Task<ParkingSpot> GetParkingSpotById(int parkingSpotID);
+
+        Task<Reservation?> GetBySessionIdAsync(string sessionId);
+        Task UpdateReservationAsync(Reservation reservation);
+
+
+        Task UpdateParkingSpotAsync(ParkingSpot spot);
     }
 }

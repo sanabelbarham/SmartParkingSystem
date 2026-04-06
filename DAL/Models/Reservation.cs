@@ -26,7 +26,8 @@ namespace DAL.Models
     public enum PaymentStatusEnum
     {
         Paid = 1,
-        UnPaid = 2
+        UnPaid = 2,
+        Pending=3
     }
 
 
@@ -46,6 +47,11 @@ namespace DAL.Models
   
         public DateTime CreatedAt { get; set; }
         public string ?Reservation_QR { get; set; }
+
+
+        public string? SessionId { get; set; }// is a number created by stripe for any paying attempt fail or success
+        public string? PaymentId { get; set; }// is a number created by stripe for any paying attempt fail or success
+
         //****************************************
 
         //1 to many

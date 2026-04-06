@@ -86,29 +86,29 @@ namespace BLL.Service.Reservations
                     else if (request.PaymentMethod == PaymentMethodEnum.Visa)
                     {
 
-                        var spot = await _reservationRepository.GetParkingSpotById(request.ParkingSpotID);
+                      //  var spot = await _reservationRepository.GetParkingSpotById(request.ParkingSpotID);
                         
 
                         var options = new SessionCreateOptions
                         {
                             PaymentMethodTypes = new List<string> { "card" },
                             LineItems = new List<SessionLineItemOptions>
-            {
-                new SessionLineItemOptions
-                {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        Currency = "USD",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
-                            Name = "Parking spot",
+                            new SessionLineItemOptions
+                            {
+                                PriceData = new SessionLineItemPriceDataOptions
+                                {
+                                    Currency = "USD",
+                                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                                    {
+                                        Name = "Parking spot",
                          
+                                    },
+                                    UnitAmount = (long)request.TotalPrice*100,
+                                },
+                                Quantity = 1,
+                            },
                         },
-                        UnitAmount = (long)request.TotalPrice*100,
-                    },
-                    Quantity = 1,
-                },
-            },
                             Mode = "payment",
                             SuccessUrl = $"https://localhost:7250/api/reservations/success?session_id={{CHECKOUT_SESSION_ID}}",
                             CancelUrl = $"https://localhost:7250/api/reservations/cancle",
@@ -119,12 +119,16 @@ namespace BLL.Service.Reservations
                         };
                         var service = new SessionService();
                         var session = service.Create(options);
-            
 
+                        request.SessionId = session.Id;
+                        request.PaymentStatus = PaymentStatusEnum.Pending;
+
+                        await _reservationRepository.CreateReservationAsync(request);
+                     
 
                         return new CheckoutResponce
                         {
-                            Message = "Reserved completeed, visa is accepted ",
+                            Message = "session is created to pay with visa ",
                             Success = true,
                             Url=session.Url
 
@@ -205,6 +209,54 @@ namespace BLL.Service.Reservations
                 return result;
         
          
+        }
+
+        public async Task<ReservationResponce> HandleSuccessAsync(string session_id)
+        {
+            var service = new SessionService();
+            var session = service.Get(session_id);
+
+            //  Verify payment
+            if (!string.Equals(session.PaymentStatus, "paid", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new Exception("Payment not completed");
+            }
+
+            // Get reservation from DB
+            var reservation = await _reservationRepository.GetBySessionIdAsync(session_id);
+
+            if (reservation == null)
+            {
+                throw new Exception("Reservation not found");
+            }
+
+            //  Update reservation
+            reservation.Status = ReservationStatusEnum.Reserved;
+            reservation.PaymentStatus = PaymentStatusEnum.Paid;
+            reservation.PaymentId = session.PaymentIntentId;
+
+            await _reservationRepository.UpdateReservationAsync(reservation);
+
+            //Lock parking spot
+            var spot = await _reservationRepository.GetParkingSpotById(reservation.ParkingSpotID);
+            if (spot == null)
+            {
+                throw new Exception("Parking spot not found");
+            }
+
+
+            spot.IsAvailable = false;
+
+            await _reservationRepository.UpdateParkingSpotAsync(spot);
+
+            //return response
+            return new ReservationResponce
+            {
+                ReservationID = reservation.ReservationID,
+                Status = (ReservationStatusEnum)reservation.Status,            
+                Message = "Payment successful, reservation confirmed",
+                Success=true
+            };
         }
     }
 }

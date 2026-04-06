@@ -15,5 +15,6 @@ namespace BLL.Service.Reservations
         Task<CheckoutResponce> CreateReservationAsync(ReservationRequest reservationRequest);
         Task<BaseResponce> DeleteReservationAsync(int id);
         Task<List<ReservationResponce>> GetReservationAsync( );
+        Task<ReservationResponce> HandleSuccessAsync(string session_id);
     }
 }

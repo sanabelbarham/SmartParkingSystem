@@ -25,13 +25,23 @@ namespace SmartParkingSystem.Area.User
             return Ok(new { responce });
 
         }
+
         [HttpGet("success")]
         [AllowAnonymous]
-
         public async Task<IActionResult> Success([FromQuery] string session_id)
         {
-            return Ok("test");
+
+
+            var responce = await _reservationService.HandleSuccessAsync(session_id);
+
+            if (responce.Success == false)
+            {
+                return BadRequest(responce);
+            }
+
+            return Ok(responce);
         }
+
 
         [HttpGet("get")]
         public async Task<IActionResult>  GetReservation( )
