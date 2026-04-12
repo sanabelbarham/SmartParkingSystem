@@ -3,13 +3,18 @@ using DAL.DTO.Responce;
 using DAL.DTO.Responce.Checkout;
 using DAL.DTO.Responce.Registor;
 using DAL.DTO.Responce.Reservation;
+using DAL.Identity;
+using DAL.Migrations;
 using DAL.Models;
 using DAL.Repository;
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,10 +23,19 @@ namespace BLL.Service.Reservations
     public class ReservationService : IReservationService
     {
         private readonly IReservationRepository _reservationRepository;
+        private readonly IEmailSender _emailSender;
+        private readonly UserManager<ApplicationUser> _userManage;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ReservationService (IReservationRepository ReservationRepository)
+        public ReservationService (IReservationRepository ReservationRepository, IEmailSender emailSender,
+            UserManager<ApplicationUser> userManage,
+              IHttpContextAccessor httpContextAccessor
+            )
         {
             _reservationRepository = ReservationRepository;
+            _emailSender = emailSender;
+            _userManage = userManage;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<CheckoutResponce> CreateReservationAsync(ReservationRequest reservationRequest)
@@ -86,9 +100,10 @@ namespace BLL.Service.Reservations
                     else if (request.PaymentMethod == PaymentMethodEnum.Visa)
                     {
 
-                      //  var spot = await _reservationRepository.GetParkingSpotById(request.ParkingSpotID);
-                        
+                        //  var spot = await _reservationRepository.GetParkingSpotById(request.ParkingSpotID);
 
+                        var currentUserId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                        request.UserID = currentUserId;
                         var options = new SessionCreateOptions
                         {
                             PaymentMethodTypes = new List<string> { "card" },
@@ -114,7 +129,7 @@ namespace BLL.Service.Reservations
                             CancelUrl = $"https://localhost:7250/api/reservations/cancle",
                             Metadata=new Dictionary<string, string>
                             {
-                                {"UserId",request.UserID}
+                                {"UserId",currentUserId}
                             }
                         };
                         var service = new SessionService();
@@ -215,7 +230,7 @@ namespace BLL.Service.Reservations
         {
             var service = new SessionService();
             var session = service.Get(session_id);
-
+            var userId = session.Metadata["UserId"];
             //  Verify payment
             if (!string.Equals(session.PaymentStatus, "paid", StringComparison.OrdinalIgnoreCase))
             {
@@ -248,15 +263,43 @@ namespace BLL.Service.Reservations
             spot.IsAvailable = false;
 
             await _reservationRepository.UpdateParkingSpotAsync(spot);
+           var user= await _userManage.FindByIdAsync(userId);
 
-            //return response
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+
+            Console.WriteLine("=== DEBUG ===");
+            Console.WriteLine($"SessionId: {session_id}");
+            Console.WriteLine($"Metadata UserId: {session.Metadata["UserId"]}");
+
+            var reservation2 = await _reservationRepository.GetBySessionIdAsync(session_id);
+            Console.WriteLine($"Reservation UserId: {reservation2?.UserID}");
+
+            var user2 = await _userManage.FindByIdAsync(reservation2.UserID);
+            Console.WriteLine($"User Email: {user2?.Email}");
+
+
+
+            var random = new Random();
+            var code = random.Next(200, 10000).ToString();
+            reservation.EntryCode = code;
+            reservation.EntryCodeExpiary = DateTime.UtcNow.AddMinutes(15);
+
+            await _emailSender.SendEmailAsync(user.Email, "Payment Successfull", $"<h2> thank you your code is {code} and is valid for only 15 minutes </h2>");
             return new ReservationResponce
             {
                 ReservationID = reservation.ReservationID,
-                Status = (ReservationStatusEnum)reservation.Status,            
+                Status = (ReservationStatusEnum)reservation.Status,
+              
+
                 Message = "Payment successful, reservation confirmed",
-                Success=true
+                Success = true
             };
+
+        
         }
     }
 }

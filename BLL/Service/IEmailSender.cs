@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Service.Reservations
+namespace BLL.Service
 {
   public  interface IEmailSender
     {

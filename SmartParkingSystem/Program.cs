@@ -137,6 +137,7 @@ namespace SmartParkingSystem
 
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 

@@ -39,6 +39,8 @@ namespace DAL.Models
         //public int SpotID { get; set; }
         public DateTime EntryTime { get; set; }
         public DateTime ExitTime { get; set; }
+        public string? EntryCode { get; set; }
+        public DateTime? EntryCodeExpiary { get; set; }
     
         public double TotalPrice { get; set; }
         public DateTime ExpiryTime { get; set; }

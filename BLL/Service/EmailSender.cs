@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Service.Reservations
+namespace BLL.Service
 {
     public class EmailSender : IEmailSender
     {
